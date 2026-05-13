@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rentals | RideLK</title>
+  <link rel="stylesheet" href="/css/rentals.css"/>
+</head>
+<body>
+
+<header class="rental-header">
+  <nav class="rental-nav">
+    <a href="/" class="logo"><span>RL</span><strong>RideLK</strong></a>
+    <div>
+      <a href="/">Home</a>
+      <a class="active" href="/admin/rentals">Rentals</a>
+      <a href="/login">Login</a>
+      <a href="/logout">Logout</a>
+    </div>
+  </nav>
+
+  <section class="rental-hero">
+    <p class="tag" th:text="${admin} ? 'Admin Dashboard' : 'Bike Rental'">Bike Rental</p>
+    <h1 th:text="${admin} ? 'Manage rental records' : 'Book and track your rides'">Book and track your rides</h1>
+    <p th:text="${admin} ? 'View all customer rental records from one admin page.' : 'Create a bike rental and view your rental history from one page.'">
+      Create a bike rental and view your rental history from one page.
+    </p>
+  </section>
+</header>
+
+<main class="rental-content">
+  <section class="stats-grid">
+    <article><span>🚲</span><small th:text="${admin} ? 'Total Records' : 'My Rentals'">My Rentals</small><strong th:text="${rentalCount}">0</strong></article>
+    <article><span>💳</span><small th:text="${admin} ? 'Total Rental Value' : 'My Total'">My Total</small><strong>Rs. <span th:text="${#numbers.formatDecimal(totalAmount, 1, 2)}">0.00</span></strong></article>
+    <article><span>⏰</span><small>Current Time</small><strong id="liveClock">--:--</strong></article>
+  </section>
+
+  <section class="rental-layout">
+    <aside class="booking-box" th:if="${!admin}">
+      <h2>New Bike Rental</h2>
+      <p>Fill the details below to create your rental request.</p>
+
+      <form action="/rentals" method="post">
+        <label>Customer Name</label>
+        <input type="text" name="customerName" placeholder="Enter your name" required/>
+
+        <label>Bike</label>
+        <select name="bikeName" id="bikeSelect" required>
+          <option value="Yamaha MT-15" data-price="7000">Yamaha MT-15 - LKR 7000/day</option>
+          <option value="Honda Dio" data-price="2500">Honda Dio - LKR 2500/day</option>
+          <option value="Bajaj Pulsar" data-price="4000">Bajaj Pulsar - LKR 4000/day</option>
+          <option value="Suzuki Gixxer" data-price="6500">Suzuki Gixxer - LKR 6500/day</option>
+          <option value="TVS Ntorq" data-price="3000">TVS Ntorq - LKR 3000/day</option>
+        </select>
+
+        <div class="two-col">
+          <div>
+            <label>Pickup Location</label>
+            <input type="text" name="pickupLocation" placeholder="Colombo" required/>
+          </div>
+          <div>
+            <label>Drop Location</label>
+            <input type="text" name="dropLocation" placeholder="Gampaha" required/>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div>
+            <label>Rental Date</label>
+            <input type="date" name="rentalDate" th:value="${today}" required/>
+          </div>
+          <div>
+            <label>Days</label>
+            <input type="number" name="rentalDays" min="1" value="1" required/>
+          </div>
+        </div>
+
+        <label>Price Per Day</label>
+        <input type="number" id="pricePerDay" name="pricePerDay" min="1" value="7000" required/>
+
+        <button type="submit">Confirm Rental</button>
+      </form>
+    </aside>
+
+    <section class="history-box" th:classappend="${admin} ? ' full'">
+      <div class="section-top">
+        <div>
+          <h2 th:text="${admin} ? 'All Customer Rentals' : 'My Rentals'">My Rentals</h2>
+          <p th:text="${admin} ? 'Admin-only view of all bike rentals.' : 'Your personal bike rental history.'">Your personal bike rental history.</p>
+        </div>
+      </div>
+
+      <div class="empty-state" th:if="${#lists.isEmpty(rentals)}">
+        <h3>No rentals found</h3>
+        <p>There are no rental records available yet.</p>
+      </div>
+
+      <article class="rental-card" th:each="rental : ${rentals}">
+        <div class="rental-bike">
+          <img th:src="${rental.bikeName == 'Honda Dio'} ? '/images/bikes/honda-dio.svg' :
+                       (${rental.bikeName == 'Bajaj Pulsar'} ? '/images/bikes/bajaj-pulsar.svg' :
+                       (${rental.bikeName == 'Suzuki Gixxer'} ? '/images/bikes/suzuki-gixxer.svg' :
+                       (${rental.bikeName == 'TVS Ntorq'} ? '/images/bikes/tvs-ntorq.svg' : '/images/bikes/yamaha-mt15.svg')))"
+               alt="Bike image"/>
+        </div>
+
+        <div class="rental-info">
+          <div class="rental-title">
+            <div>
+              <small th:text="${rental.rentalId}">R001</small>
+              <h3 th:text="${rental.bikeName}">Yamaha MT-15</h3>
+            </div>
+            <span th:text="${rental.status}">Pending</span>
+          </div>
+
+          <p class="route">
+            <span th:text="${rental.pickupLocation}">Colombo</span>
+            <b>→</b>
+            <span th:text="${rental.dropLocation}">Gampaha</span>
+          </p>
+
+          <p class="admin-user" th:if="${admin}">
+            Customer/User: <strong th:text="${rental.username}">user</strong>
+          </p>
+
+          <div class="detail-row">
+            <div><small>Date</small><strong th:text="${rental.rentalDate}">2026-05-11</strong></div>
+            <div><small>Days</small><strong th:text="${rental.rentalDays}">3</strong></div>
+            <div><small>Total</small><strong>Rs. <span th:text="${#numbers.formatDecimal(rental.totalAmount, 1, 2)}">7500.00</span></strong></div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </section>
+</main>
+
+<script>
+  const clock = document.getElementById("liveClock");
+  function updateClock() {
+    if (!clock) return;
+    const now = new Date();
+    clock.textContent = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  const bikeSelect = document.getElementById("bikeSelect");
+  const priceInput = document.getElementById("pricePerDay");
+  if (bikeSelect && priceInput) {
+    bikeSelect.addEventListener("change", function () {
+      const price = bikeSelect.options[bikeSelect.selectedIndex].dataset.price;
+      priceInput.value = price;
+    });
+  }
+</script>
+
+</body>
+</html>
