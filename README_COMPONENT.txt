@@ -58,6 +58,3 @@ Create: User creates a rental booking.
 Read: User views own rentals and admin views all rentals.
 Update: Rental details/status can be updated in the service/file handling layer.
 Delete: Rental records can be deleted from rentals.txt using file handling.
-
-Viva Explanation:
-My component is the Bike Rental Management component. It has three UIs: Add Rental UI, View My Rentals UI, and Admin Rental Records UI. I used Java OOP through Rental.java, file handling through RentalFileService.java, and Spring Boot MVC through RentalViewController.java. Rental data is stored in rentals.txt.
