@@ -1,0 +1,8 @@
+src/main/java/com/example/bikerental/model/Rental.java
+src/main/java/com/example/bikerental/service/RentalFileService.java
+src/main/java/com/example/bikerental/service/RentalService.java
+src/main/java/com/example/bikerental/controller/RentalViewController.java
+src/main/resources/templates/rentals.html
+src/main/resources/static/css/rentals.css
+rentals.txt
+README_COMPONENT.txt
