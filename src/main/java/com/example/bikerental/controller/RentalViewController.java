@@ -1,5 +1,6 @@
 package com.example.bikerental.controller;
 
+// this controller handles the rentals page for users.it is for rental management ui, not api.
 import com.example.bikerental.model.Rental;
 import com.example.bikerental.service.RentalFileService;
 import jakarta.servlet.http.HttpSession;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Controller
 public class RentalViewController {
+
     private final RentalFileService rentalFileService;
 
     public RentalViewController(RentalFileService rentalFileService) {
@@ -28,8 +30,7 @@ public class RentalViewController {
     }
 
     @PostMapping("/rentals")
-    public String createRental(@RequestParam String customerName,
-                               @RequestParam String bikeName,
+    public String createRental(@RequestParam String bikeName,
                                @RequestParam String pickupLocation,
                                @RequestParam String dropLocation,
                                @RequestParam String rentalDate,
@@ -41,7 +42,7 @@ public class RentalViewController {
         Rental rental = new Rental(
                 rentalFileService.generateRentalId(),
                 username,
-                customerName,
+                username,   // customerName not collected — use username
                 bikeName,
                 pickupLocation,
                 dropLocation,
@@ -66,11 +67,17 @@ public class RentalViewController {
         return "redirect:/rentals";
     }
 
+    //admin can approve or reject a pending rental |action can be confirm or reject.
+
+    @PostMapping("/admin/rentals/approve")
+    public String approveOrRejectRental(@RequestParam String rentalId,
+                                        @RequestParam String action) {
+        rentalFileService.updateRentalStatus(rentalId, action);
+        return "redirect:/admin?tab=rentals";
+    }
+
     private void addRentalAttributes(Model model, String username, boolean admin, List<Rental> rentals) {
-        double totalAmount = 0;
-        for (Rental rental : rentals) {
-            totalAmount += rental.getTotalAmount();
-        }
+        double totalAmount = rentals.stream().mapToDouble(Rental::getTotalAmount).sum();
         model.addAttribute("rentals", rentals);
         model.addAttribute("username", username);
         model.addAttribute("admin", admin);
