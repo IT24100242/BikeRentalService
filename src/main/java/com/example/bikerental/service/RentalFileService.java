@@ -7,9 +7,12 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+//this service handles rental details using rentals.txt file.bookings, admin approvals and dashboard details use this same file
 @Service
 public class RentalFileService {
-    private static final String FILE_PATH = "data/rentals.txt";
+
+    // Must match RentalService.FILE_PATH so both services share one file.
+    private static final String FILE_PATH = "rentals.txt";
 
     public RentalFileService() {
         createFileIfNotExists();
@@ -18,17 +21,7 @@ public class RentalFileService {
     private void createFileIfNotExists() {
         try {
             File file = new File(FILE_PATH);
-            File parent = file.getParentFile();
-
-            if (parent != null && !parent.exists()) {
-                parent.mkdirs();
-            }
-
-            if (!file.exists()) {
-                file.createNewFile();
-                addRental(new Rental("R001", "user", "Kamal Perera", "Yamaha MT-15",
-                        "Colombo", "Gampaha", "2026-05-11", 3, 7000.0, "Confirmed"));
-            }
+            if (!file.exists()) file.createNewFile();
         } catch (IOException e) {
             System.out.println("Error creating rental file: " + e.getMessage());
         }
@@ -37,41 +30,33 @@ public class RentalFileService {
     public synchronized List<Rental> getAllRentals() {
         List<Rental> rentals = new ArrayList<>();
         createFileIfNotExists();
-
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
-
             while ((line = br.readLine()) != null) {
                 if (line.trim().isEmpty()) continue;
-
                 try {
-                    Rental rental = Rental.fromFileString(line);
-                    if (rental != null) rentals.add(rental);
-                } catch (Exception ignored) {
-                }
+                    Rental r = Rental.fromFileString(line);
+                    if (r != null) rentals.add(r);
+                } catch (Exception ignored) {}
             }
         } catch (IOException e) {
             System.out.println("Error reading rentals: " + e.getMessage());
         }
-
         return rentals;
     }
 
     public synchronized List<Rental> getRentalsByUsername(String username) {
-        List<Rental> userRentals = new ArrayList<>();
-
-        for (Rental rental : getAllRentals()) {
-            if (rental.getUsername() != null && rental.getUsername().equalsIgnoreCase(username)) {
-                userRentals.add(rental);
+        List<Rental> result = new ArrayList<>();
+        for (Rental r : getAllRentals()) {
+            if (r.getUsername() != null && r.getUsername().equalsIgnoreCase(username)) {
+                result.add(r);
             }
         }
-
-        return userRentals;
+        return result;
     }
 
     public synchronized void addRental(Rental rental) {
         createFileIfNotExists();
-
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
             bw.write(rental.toFileString());
             bw.newLine();
@@ -83,5 +68,33 @@ public class RentalFileService {
     public synchronized String generateRentalId() {
         int next = getAllRentals().size() + 1;
         return String.format("R%03d", next);
+    }
+
+    //update op-->this method finds rental by id and updates the status.return true if updated, false if not found
+    public synchronized boolean updateRentalStatus(String rentalId, String newStatus) {
+        List<Rental> rentals = getAllRentals();
+        boolean found = false;
+
+        for (Rental rental : rentals) {
+            if (rental.getRentalId() != null && rental.getRentalId().equalsIgnoreCase(rentalId)) {
+                rental.setStatus(newStatus);
+                found = true;
+                break;
+            }
+        }
+
+        if (found) {
+            // overwrite the file with the full updated list
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH, false))) {
+                for (Rental r : rentals) {
+                    bw.write(r.toFileString());
+                    bw.newLine();
+                }
+            } catch (IOException e) {
+                System.out.println("Error updating rental status: " + e.getMessage());
+                return false;
+            }
+        }
+        return found;
     }
 }
