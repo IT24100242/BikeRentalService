@@ -1,5 +1,7 @@
 package com.example.bikerental.model;
 
+//this  class is for bike rental details.it supports old and new rental file formats.
+
 public class Rental {
     private String rentalId;
     private String username;
@@ -17,153 +19,128 @@ public class Rental {
     private double totalCost;
     private String status;
 
-    public Rental() {
-    }
+    public Rental() {}
 
-
-    // Compatibility constructor used by existing RentalController and PaymentController.
+    //constructor used by RentalController and PaymentController
     public Rental(String rentalId, String userEmail, String bikeId, String startDate, String endDate,
                   double totalCost, String status) {
-        this.rentalId = rentalId;
-        this.username = userEmail;
-        this.userEmail = userEmail;
+        this.rentalId     = rentalId;
+        this.username     = userEmail;
+        this.userEmail    = userEmail;
         this.customerName = userEmail;
-        this.bikeId = bikeId;
-        this.bikeName = bikeId;
+        this.bikeId       = bikeId;
+        this.bikeName     = bikeId;
         this.pickupLocation = "";
-        this.dropLocation = "";
-        this.rentalDate = startDate;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.rentalDays = 1;
-        this.pricePerDay = totalCost;
-        this.totalCost = totalCost;
-        this.status = status;
+        this.dropLocation   = "";
+        this.rentalDate   = startDate;
+        this.startDate    = startDate;
+        this.endDate      = endDate;
+        this.rentalDays   = 1;
+        this.pricePerDay  = totalCost;
+        this.totalCost    = totalCost;
+        this.status       = status;
     }
 
+    // constructor used for rental page
     public Rental(String rentalId, String username, String customerName, String bikeName,
                   String pickupLocation, String dropLocation, String rentalDate,
                   int rentalDays, double pricePerDay, String status) {
-        this.rentalId = rentalId;
-        this.username = username;
-        this.userEmail = username;
-        this.customerName = customerName;
-        this.bikeName = bikeName;
-        this.bikeId = bikeName;
+        this.rentalId       = rentalId;
+        this.username       = username;
+        this.userEmail      = username;
+        this.customerName   = customerName;
+        this.bikeName       = bikeName;
+        this.bikeId         = bikeName;
         this.pickupLocation = pickupLocation;
-        this.dropLocation = dropLocation;
-        this.rentalDate = rentalDate;
-        this.startDate = rentalDate;
-        this.endDate = rentalDate;
-        this.rentalDays = rentalDays;
-        this.pricePerDay = pricePerDay;
-        this.totalCost = rentalDays * pricePerDay;
-        this.status = status;
+        this.dropLocation   = dropLocation;
+        this.rentalDate     = rentalDate;
+        this.startDate      = rentalDate;
+        this.endDate        = rentalDate;
+        this.rentalDays     = rentalDays;
+        this.pricePerDay    = pricePerDay;
+        this.totalCost      = rentalDays * pricePerDay;
+        this.status         = status;
     }
 
+    // constructor {no rentalId}
     public Rental(String userEmail, String bikeId, String startDate, String endDate,
                   double totalCost, String status) {
-        this.rentalId = "";
-        this.username = userEmail;
-        this.userEmail = userEmail;
-        this.customerName = userEmail;
-        this.bikeId = bikeId;
-        this.bikeName = bikeId;
-        this.pickupLocation = "";
-        this.dropLocation = "";
-        this.rentalDate = startDate;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.rentalDays = 1;
-        this.pricePerDay = totalCost;
-        this.totalCost = totalCost;
-        this.status = status;
+        this("", userEmail, bikeId, startDate, endDate, totalCost, status);
     }
 
-    public String getRentalId() { return rentalId; }
-    public void setRentalId(String rentalId) { this.rentalId = rentalId; }
+    // getters and swetters
 
-    public String getRentalID() { return rentalId; }
-    public void setRentalID(String rentalId) { this.rentalId = rentalId; }
+    public String getRentalId()               { return rentalId; }
+    public void   setRentalId(String rentalId){ this.rentalId = rentalId; }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; this.userEmail = username; }
+    // Alias kept for compatibility
+    public String getRentalID()               { return rentalId; }
+    public void   setRentalID(String id)      { this.rentalId = id; }
 
-    public String getUserEmail() { return userEmail != null ? userEmail : username; }
-    public void setUserEmail(String userEmail) { this.userEmail = userEmail; this.username = userEmail; }
+    public String getUsername()               { return username; }
+    public void   setUsername(String u)       { this.username = u; this.userEmail = u; }
 
-    public String getCustomerName() { return customerName; }
-    public void setCustomerName(String customerName) { this.customerName = customerName; }
+    public String getUserEmail()              { return userEmail != null ? userEmail : username; }
+    public void   setUserEmail(String e)      { this.userEmail = e; this.username = e; }
 
-    public String getBikeId() { return bikeId != null ? bikeId : bikeName; }
-    public void setBikeId(String bikeId) { this.bikeId = bikeId; this.bikeName = bikeId; }
+    public String getCustomerName()           { return customerName; }
+    public void   setCustomerName(String c)   { this.customerName = c; }
 
-    public String getBikeName() { return bikeName != null ? bikeName : bikeId; }
-    public void setBikeName(String bikeName) { this.bikeName = bikeName; this.bikeId = bikeName; }
+    public String getBikeId()                 { return bikeId != null ? bikeId : bikeName; }
+    public void   setBikeId(String id)        { this.bikeId = id; this.bikeName = id; }
 
-    public String getPickupLocation() { return pickupLocation; }
-    public void setPickupLocation(String pickupLocation) { this.pickupLocation = pickupLocation; }
+    public String getBikeName()               { return bikeName != null ? bikeName : bikeId; }
+    public void   setBikeName(String n)       { this.bikeName = n; this.bikeId = n; }
 
-    public String getDropLocation() { return dropLocation; }
-    public void setDropLocation(String dropLocation) { this.dropLocation = dropLocation; }
+    public String getPickupLocation()         { return pickupLocation; }
+    public void   setPickupLocation(String l) { this.pickupLocation = l; }
 
-    public String getRentalDate() { return rentalDate != null ? rentalDate : startDate; }
-    public void setRentalDate(String rentalDate) { this.rentalDate = rentalDate; this.startDate = rentalDate; }
+    public String getDropLocation()           { return dropLocation; }
+    public void   setDropLocation(String l)   { this.dropLocation = l; }
 
-    public String getStartDate() { return startDate != null ? startDate : rentalDate; }
-    public void setStartDate(String startDate) { this.startDate = startDate; this.rentalDate = startDate; }
+    public String getRentalDate()             { return rentalDate != null ? rentalDate : startDate; }
+    public void   setRentalDate(String d)     { this.rentalDate = d; this.startDate = d; }
 
-    public String getEndDate() { return endDate != null ? endDate : rentalDate; }
-    public void setEndDate(String endDate) { this.endDate = endDate; }
+    public String getStartDate()              { return startDate != null ? startDate : rentalDate; }
+    public void   setStartDate(String d)      { this.startDate = d; this.rentalDate = d; }
 
-    public int getRentalDays() { return rentalDays; }
-    public void setRentalDays(int rentalDays) { this.rentalDays = rentalDays; this.totalCost = rentalDays * pricePerDay; }
+    public String getEndDate()                { return endDate != null ? endDate : rentalDate; }
+    public void   setEndDate(String d)        { this.endDate = d; }
 
-    public double getPricePerDay() { return pricePerDay; }
-    public void setPricePerDay(double pricePerDay) { this.pricePerDay = pricePerDay; this.totalCost = rentalDays * pricePerDay; }
+    public int    getRentalDays()             { return rentalDays; }
+    public void   setRentalDays(int days)     { this.rentalDays = days; this.totalCost = days * pricePerDay; }
 
-    public double getTotalAmount() { return totalCost > 0 ? totalCost : rentalDays * pricePerDay; }
-    public double getTotalCost() { return getTotalAmount(); }
-    public void setTotalCost(double totalCost) { this.totalCost = totalCost; }
+    public double getPricePerDay()            { return pricePerDay; }
+    public void   setPricePerDay(double p)    { this.pricePerDay = p; this.totalCost = rentalDays * p; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public double getTotalAmount()            { return totalCost > 0 ? totalCost : rentalDays * pricePerDay; }
+    public double getTotalCost()              { return getTotalAmount(); }
+    public void   setTotalCost(double c)      { this.totalCost = c; }
 
+    public String getStatus()                 { return status; }
+    public void   setStatus(String s)         { this.status = s; }
+
+// file save part
+
+    // makes rental details ready to save in the file.
     public String toFileString() {
         return safe(rentalId) + "," + safe(username) + "," + safe(customerName) + "," + safe(getBikeName()) + ","
                 + safe(pickupLocation) + "," + safe(dropLocation) + "," + safe(getRentalDate()) + ","
                 + rentalDays + "," + pricePerDay + "," + safe(status);
     }
 
+    //this method reads rental data from one line in the file.it supports old and new rental formats
     public static Rental fromFileString(String line) {
-        String[] data = line.split(",", -1);
-
-        if (data.length == 7) {
-            return new Rental(data[0], data[1], data[2], data[3], data[4],
-                    Double.parseDouble(data[5]), data[6]);
-        }
-
-        if (data.length == 10) {
-            return new Rental(data[0], data[1], data[2], data[3], data[4],
-                    data[5], data[6], Integer.parseInt(data[7]),
-                    Double.parseDouble(data[8]), data[9]);
-        }
-
-        if (data.length == 6) {
-            return new Rental(data[0], data[1], data[2], data[3],
-                    Double.parseDouble(data[4]), data[5]);
-        }
-
-        if (data.length == 5) {
-            return new Rental(data[0], "user", data[1], data[2], "Colombo",
-                    "Colombo", "2026-05-11", Integer.parseInt(data[3]),
-                    Double.parseDouble(data[4]), "Confirmed");
-        }
-
+        String[] d = line.split(",", -1);
+        if (d.length == 10)
+            return new Rental(d[0], d[1], d[2], d[3], d[4], d[5], d[6],
+                    Integer.parseInt(d[7]), Double.parseDouble(d[8]), d[9]);
+        if (d.length == 7)
+            return new Rental(d[0], d[1], d[2], d[3], d[4], Double.parseDouble(d[5]), d[6]);
+        if (d.length == 6)
+            return new Rental(d[0], d[1], d[2], d[3], Double.parseDouble(d[4]), d[5]);
         return null;
     }
 
-    private static String safe(String value) {
-        return value == null ? "" : value;
-    }
+    private static String safe(String v) { return v == null ? "" : v; }
 }
