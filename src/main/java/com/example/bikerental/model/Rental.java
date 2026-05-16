@@ -66,9 +66,7 @@ public class Rental {
                   double totalCost, String status) {
         this("", userEmail, bikeId, startDate, endDate, totalCost, status);
     }
-
     //getters and setters
-
     public String getRentalId()               { return rentalId; }
     public void   setRentalId(String rentalId){ this.rentalId = rentalId; }
 
