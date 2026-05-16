@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fleet — RideLK</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#1a2238;--yellow:#FFD600;--yh:#e6c200;--white:#fff;--bg:#f5f6fa;--text:#1a2238;--muted:#8a94a6;--border:#e8ecf1;--green:#16a34a;--red:#ef4444}
+body{font-family:'Inter',sans-serif;background:var(--bg);display:flex;height:100vh;overflow:hidden;color:var(--text)}
+.sidebar{width:210px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;padding:28px 16px 24px}
+.sb-brand{display:flex;align-items:center;gap:10px;margin-bottom:36px}
+.sb-badge{width:36px;height:36px;background:var(--yellow);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--navy)}
+.sb-info{display:flex;flex-direction:column;line-height:1.2}
+.sb-name{font-size:15px;font-weight:700;color:#fff}
+.sb-sub{font-size:10.5px;color:#6b7b9a}
+.nav-item{display:block;width:100%;padding:11px 14px;border-radius:10px;font-size:14px;font-weight:500;color:#8a9ab8;cursor:pointer;background:transparent;border:none;text-align:left;font-family:'Inter',sans-serif;margin-bottom:4px;text-decoration:none;transition:.2s}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.05)}
+.nav-item.active{background:var(--yellow);color:var(--navy);font-weight:700}
+.spacer{flex:1}
+.nav-logout{display:block;width:100%;padding:11px 14px;border-radius:10px;background:var(--yellow);color:var(--navy);font-size:14px;font-weight:700;text-align:center;text-decoration:none;transition:.2s}
+.nav-logout:hover{background:var(--yh)}
+.main{flex:1;overflow-y:auto;padding:36px 40px}
+.tab{display:none;animation:fi .3s ease}
+.tab.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.pt{font-size:24px;font-weight:800}
+.ug{font-size:14px;color:var(--muted)}
+.ug strong{color:var(--text)}
+.bike-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:20px}
+.bike-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;transition:.25s}
+.bike-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(26,34,56,.1);border-color:var(--yellow)}
+.bh{display:flex;justify-content:space-between;align-items:flex-start}
+.bt{font-size:16px;font-weight:700}
+.btp{font-size:11px;font-weight:700;color:var(--navy);background:rgba(26,34,56,.07);padding:3px 9px;border-radius:999px}
+.bd{font-size:13px;color:var(--muted);line-height:1.5;flex-grow:1}
+.bm{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--bg);padding:12px;border-radius:10px}
+.ml{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.mv{font-size:13px;font-weight:600}
+.bf{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--border)}
+.price{font-size:20px;font-weight:800}
+.price span{font-size:12px;color:var(--muted);font-weight:400}
+.sa{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11.5px;font-weight:700}
+.s-av{background:#f0fdf4;color:var(--green);border:1px solid #bbf7d0}
+.s-bk{background:#fef2f2;color:var(--red);border:1px solid #fecaca}
+.rent-btn{background:var(--yellow);color:var(--navy);border:none;padding:9px 18px;border-radius:9px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:.2s}
+.rent-btn:hover{background:var(--yh)}
+.return-btn{background:#f0fdf4;color:var(--green);border:1px solid #bbf7d0;padding:9px 18px;border-radius:9px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:.2s}
+.return-btn:hover{background:var(--green);color:#fff}
+.empty{text-align:center;padding:50px;color:var(--muted);grid-column:1/-1}
+.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px}
+.card h3{font-size:16px;font-weight:700;margin-bottom:6px}
+.card p{font-size:13.5px;color:var(--muted)}
+.bk-meta{display:flex;gap:20px;margin-top:10px;flex-wrap:wrap}
+.bk-meta span{font-size:12px;color:var(--muted)}
+.bk-meta strong{color:var(--text)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:13px;font-weight:600;color:var(--text)}
+.fg input,.fg textarea,.fg select{padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);background:#fff;transition:.2s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{outline:none;border-color:var(--navy)}
+.fg textarea{resize:vertical;min-height:70px}
+.btn-y{background:var(--yellow);color:var(--navy);border:none;padding:11px 24px;border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:.2s}
+.btn-y:hover{background:var(--yh)}
+.btn-d{background:#fef2f2;color:var(--red);border:1px solid #fecaca;padding:7px 14px;border-radius:7px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
+.btn-d:hover{background:var(--red);color:#fff}
+.stars{display:flex;gap:6px;margin-bottom:4px}
+.star{font-size:22px;cursor:pointer;color:#ddd;transition:.15s}
+.star.on{color:#FFD600}
+.rv-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.rv-card .rv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.rv-card .rv-bike{font-size:13px;font-weight:700}
+.rv-card .rv-rating{color:#FFD600;font-size:14px}
+.rv-card .rv-comment{font-size:13.5px;color:var(--muted)}
+.rv-card .rv-email{font-size:11px;color:var(--muted);margin-top:4px}
+.manage-list{margin-top:24px}
+.ml-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
+.ml-row:last-child{border-bottom:none}
+.ml-name{font-size:14px;font-weight:600}
+.ml-meta{font-size:12px;color:var(--muted)}
+.alert-s{background:#f0fdf4;color:var(--green);border:1px solid #bbf7d0;padding:10px 16px;border-radius:8px;font-size:13.5px;font-weight:600;margin-bottom:20px}
+.alert-e{background:#fef2f2;color:var(--red);border:1px solid #fecaca;padding:10px 16px;border-radius:8px;font-size:13.5px;font-weight:600;margin-bottom:20px}
+.modal-ov{position:fixed;inset:0;background:rgba(26,34,56,.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;visibility:hidden;transition:.3s}
+.modal-ov.active{opacity:1;visibility:visible}
+.modal-c{background:#fff;border-radius:18px;padding:32px;width:100%;max-width:420px;transform:translateY(16px);transition:.3s;box-shadow:0 20px 60px rgba(26,34,56,.15)}
+.modal-ov.active .modal-c{transform:translateY(0)}
+.modal-c h2{font-size:20px;font-weight:800;margin-bottom:4px}
+.modal-c p{font-size:13px;color:var(--muted);margin-bottom:20px}
+.cost-box{background:var(--bg);border-radius:10px;padding:14px;margin:16px 0}
+.cr{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:6px}
+.ct{display:flex;justify-content:space-between;font-size:15px;font-weight:700;border-top:1px solid var(--border);padding-top:8px}
+.ma{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.btn-cancel{padding:9px 18px;background:transparent;color:var(--text);border:1.5px solid var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+.btn-cancel:hover{background:var(--bg)}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <a href="/" class="sb-brand" style="text-decoration: none;">
+    <div class="sb-badge">RL</div>
+    <div class="sb-info"><span class="sb-name" style="color: #fff;">RideLK</span><span class="sb-sub">Customer Portal</span></div>
+  </a>
+  <a href="/" class="nav-item">Home</a>
+  <button class="nav-item active" id="nav-fleet"   onclick="showTab('fleet')">Fleet</button>
+  <button class="nav-item"        id="nav-bookings" onclick="showTab('bookings')">My Bookings</button>
+  <button class="nav-item"        id="nav-reviews"  onclick="showTab('reviews')">Reviews</button>
+  <button class="nav-item"        id="nav-manage"   onclick="showTab('manage')">Manage Bikes</button>
+  <div class="spacer"></div>
+  <a href="/logout" class="nav-logout">Logout</a>
+</aside>
+
+<main class="main">
+  <div id="alertBox"></div>
+  <div id="paidBanner" style="display:none;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;padding:12px 18px;border-radius:10px;font-size:14px;font-weight:600;margin-bottom:20px;">
+    ✓ Payment successful! Your bike is booked.
+  </div>
+
+  
+  <div id="fleet" class="tab active">
+    <div class="ph">
+      <h1 class="pt">Available Bikes</h1>
+      <span class="ug">Welcome, <strong th:text="${session.userName != null ? session.userName : session.userEmail}">User</strong></span>
+    </div>
+    <div class="bike-grid" id="bikeGrid"><div class="empty">Loading bikes...</div></div>
+  </div>
+
+  
+  <div id="bookings" class="tab">
+    <div class="ph"><h1 class="pt">My Bookings</h1></div>
+    <div id="bookingsList"><div class="empty">Loading...</div></div>
+  </div>
+
+  
+  <div id="reviews" class="tab">
+    <div class="ph"><h1 class="pt">Reviews</h1></div>
+    <div class="card" style="margin-bottom:28px">
+      <h3 style="margin-bottom:16px">Write a Review</h3>
+      <div class="fg" style="margin-bottom:14px">
+        <label>Select Bike</label>
+        <select id="reviewBike"></select>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:6px">Rating</label>
+        <div class="stars" id="stars">
+          <span class="star" data-v="1" onclick="setRating(1)">★</span>
+          <span class="star" data-v="2" onclick="setRating(2)">★</span>
+          <span class="star" data-v="3" onclick="setRating(3)">★</span>
+          <span class="star" data-v="4" onclick="setRating(4)">★</span>
+          <span class="star" data-v="5" onclick="setRating(5)">★</span>
+        </div>
+        <input type="hidden" id="ratingVal" value="0">
+      </div>
+      <div class="fg" style="margin-bottom:16px">
+        <label>Comment</label>
+        <textarea id="rvComment" placeholder="Share your experience..."></textarea>
+      </div>
+      <button class="btn-y" onclick="submitReview()">Submit Review</button>
+    </div>
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:14px">All Reviews</h3>
+    <div id="reviewsList"><div class="empty">Loading...</div></div>
+  </div>
+
+  
+  <div id="manage" class="tab">
+    <div class="ph"><h1 class="pt">Manage Bikes</h1></div>
+    <div class="card">
+      <h3 style="margin-bottom:16px">Add New Bike</h3>
+      <div class="form-row">
+        <div class="fg"><label>Brand</label><input id="mBrand" placeholder="e.g. Honda"></div>
+        <div class="fg"><label>Model</label><input id="mModel" placeholder="e.g. CB150"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Type</label><input id="mType" placeholder="e.g. Sport, Scooter"></div>
+        <div class="fg"><label>Price / Day (LKR)</label><input id="mPrice" type="number" placeholder="e.g. 3500"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Location</label><input id="mLoc" placeholder="e.g. Colombo"></div>
+        <div class="fg"><label>Image URL</label><input id="mImg" placeholder="e.g. /images/bike.png"></div>
+      </div>
+      <div class="fg" style="margin-bottom:14px"><label>Description</label><input id="mDesc" placeholder="Short description"></div>
+      <button class="btn-y" onclick="addBike()">Add Bike</button>
+    </div>
+    <div class="manage-list" id="manageList"></div>
+  </div>
+</main>
+
+
+<div class="modal-ov" id="rentModal">
+  <div class="modal-c">
+    <h2>Book Bike</h2>
+    <p id="mName"></p>
+    <input type="hidden" id="mId"><input type="hidden" id="mRate">
+    <div class="fg" style="margin-bottom:12px"><label>Start Date</label><input type="date" id="sDate"></div>
+    <div class="fg"><label>End Date</label><input type="date" id="eDate"></div>
+    <div class="cost-box">
+      <div class="cr"><span>Days:</span><span id="cDays">0</span></div>
+      <div class="ct"><span>Total:</span><span>LKR <span id="cTotal">0.00</span></span></div>
+    </div>
+    <div class="ma">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-y" onclick="confirmRent()">Confirm Booking</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-ov" id="editModal">
+  <div class="modal-c" style="max-width: 500px;">
+    <h2>Edit Bike</h2>
+    <p>Update bike details in the fleet.</p>
+    <input type="hidden" id="editBikeId">
+    <div class="form-row">
+      <div class="fg"><label>Brand</label><input id="editBrand"></div>
+      <div class="fg"><label>Model</label><input id="editModel"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Type</label><input id="editType"></div>
+      <div class="fg"><label>Price / Day</label><input id="editPrice" type="number"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Location</label><input id="editLoc"></div>
+      <div class="fg"><label>Image URL</label><input id="editImg"></div>
+    </div>
+    <div class="fg" style="margin-bottom:16px">
+      <label>Description</label>
+      <textarea id="editDesc" style="min-height: 80px;"></textarea>
+    </div>
+    <div class="ma">
+      <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+      <button class="btn-y" onclick="saveBikeUpdate()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var userEmail='';
+var currentRating=0;
+var bikes=[];
+var PROTECTED=['BK-101','BK-102','BK-103','BK-104','BK-105','BK-106'];
+
+// Init
+document.addEventListener('DOMContentLoaded',async()=>{
+  try{const r=await fetch('/api/session');const d=await r.json();if(d.loggedIn)userEmail=d.email;}catch(e){}
+  fetchBikes();
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  if(urlParams.get('paid')==='true'){
+    document.getElementById('paidBanner').style.display='block';
+    setTimeout(()=>document.getElementById('paidBanner').style.display='none',5000);
+  }
+  
+  const tabParam = urlParams.get('tab');
+  if(tabParam) {
+    showTab(tabParam);
+  }
+});
+
+// Tab switching
+function showTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  if(name==='bookings') loadBookings();
+  if(name==='reviews') loadReviews();
+  if(name==='manage') loadManage();
+}
+
+function showAlert(msg,ok){
+  var b=document.getElementById('alertBox');
+  b.innerHTML='<div class="'+(ok?'alert-s':'alert-e')+'">'+msg+'</div>';
+  setTimeout(()=>{b.innerHTML='';},4000);
+}
+
+// FLEET
+async function fetchBikes(){
+  try{
+    const r=await fetch('/api/bikes');
+    bikes=await r.json();
+    renderFleet(bikes);
+    populateBikeSelect();
+  }catch(e){document.getElementById('bikeGrid').innerHTML='<div class="empty" style="color:var(--red)">Error loading bikes.</div>';}
+}
+
+function renderFleet(list){
+  var g=document.getElementById('bikeGrid');
+  if(!list.length){g.innerHTML='<div class="empty">No bikes available.</div>';return;}
+  g.innerHTML=list.map(b=>`
+    <div class="bike-card">
+      <div style="height: 160px; overflow: hidden; background: #f9fafb; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center;">
+        <img src="${b.imageUrl}" alt="${b.brand} ${b.model}" style="width: 100%; height: 100%; object-fit: contain;">
+      </div>
+      <div class="bh"><h3 class="bt">${b.brand} ${b.model}</h3><span class="btp">${b.type}</span></div>
+      <p class="bd">${b.description}</p>
+      <div class="bm">
+        <div><div class="ml">Location</div><div class="mv">📍 ${b.location}</div></div>
+        <div><div class="ml">Status</div><span class="sa ${b.available?'s-av':'s-bk'}">${b.available?'Available':'Booked'}</span></div>
+      </div>
+      <div class="bf">
+        <div class="price">LKR ${b.hourlyRate}<span>/day</span></div>
+        ${b.available
+          ?`<button class="rent-btn" onclick="openModal('${b.id}','${b.brand} ${b.model}',${b.hourlyRate})">Rent Now</button>`
+          :`<button class="return-btn" onclick="returnBike('${b.id}')">Return Bike</button>`}
+      </div>
+    </div>`).join('');
+}
+
+// MY BOOKINGS
+async function loadBookings(){
+  var el=document.getElementById('bookingsList');
+  el.innerHTML='<div class="empty">Loading...</div>';
+  try{
+    const r=await fetch('/api/rentals');
+    const all=await r.json();
+    const mine=all.filter(x=>x.userEmail===userEmail);
+    if(!mine.length){el.innerHTML='<div class="empty">No bookings yet.</div>';return;}
+    el.innerHTML=mine.map(r=>`
+      <div class="card">
+        <h3>Rental #${r.rentalId}</h3>
+        <div class="bk-meta">
+          <span>Bike: <strong>${r.bikeId}</strong></span>
+          <span>From: <strong>${r.startDate}</strong></span>
+          <span>To: <strong>${r.endDate}</strong></span>
+          <span>Cost: <strong>LKR ${r.totalCost}</strong></span>
+          <span>Status: <strong>${r.status}</strong></span>
+        </div>
+      </div>`).join('');
+  }catch(e){el.innerHTML='<div class="empty" style="color:var(--red)">Error loading bookings.</div>';}
+}
+
+// REVIEWS
+function populateBikeSelect(){
+  var s=document.getElementById('reviewBike');
+  s.innerHTML=bikes.map(b=>`<option value="${b.id}">${b.brand} ${b.model}</option>`).join('');
+}
+
+function setRating(v){
+  currentRating=v;
+  document.getElementById('ratingVal').value=v;
+  document.querySelectorAll('.star').forEach(s=>{
+    s.classList.toggle('on',parseInt(s.dataset.v)<=v);
+  });
+}
+
+async function submitReview(){
+  var bikeId=document.getElementById('reviewBike').value;
+  var rating=currentRating;
+  var comment=document.getElementById('rvComment').value.trim();
+  if(!bikeId||!rating||!comment){showAlert('Please select a bike, rating, and comment.',false);return;}
+  try{
+    var fd=new FormData();
+    fd.append('userEmail',userEmail);fd.append('bikeId',bikeId);
+    fd.append('rating',rating);fd.append('comment',comment);
+    await fetch('/review',{method:'POST',body:fd});
+    showAlert('Review submitted!',true);
+    document.getElementById('rvComment').value='';
+    setRating(0);
+    loadReviews();
+  }catch(e){showAlert('Error submitting review.',false);}
+}
+
+async function loadReviews(){
+  var el=document.getElementById('reviewsList');
+  el.innerHTML='<div class="empty">Loading...</div>';
+  try{
+    const r=await fetch('/api/reviews');
+    const all=await r.json();
+    if(!all.length){el.innerHTML='<div class="empty">No reviews yet. Be the first!</div>';return;}
+    el.innerHTML=all.slice().reverse().map(rv=>{
+      var b=bikes.find(x=>x.id===rv.bikeId);
+      var name=b?b.brand+' '+b.model:rv.bikeId;
+      var stars='★'.repeat(rv.rating)+'☆'.repeat(5-rv.rating);
+      return `<div class="rv-card">
+        <div class="rv-top"><span class="rv-bike">${name}</span><span class="rv-rating">${stars}</span></div>
+        <div class="rv-comment">${rv.comment}</div>
+        <div class="rv-email">${rv.userEmail}</div>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML='<div class="empty" style="color:var(--red)">Error loading reviews.</div>';}
+}
+
+// MANAGE BIKES
+async function addBike(){
+  var brand=document.getElementById('mBrand').value.trim();
+  var model=document.getElementById('mModel').value.trim();
+  var type=document.getElementById('mType').value.trim();
+  var loc=document.getElementById('mLoc').value.trim();
+  var img=document.getElementById('mImg').value.trim();
+  var desc=document.getElementById('mDesc').value.trim();
+  if(!brand||!model||!type||!price||!loc||!desc||!img){showAlert('Please fill in all fields.',false);return;}
+  try{
+    var fd=new FormData();
+    fd.append('brand',brand);fd.append('model',model);fd.append('type',type);
+    fd.append('hourlyRate',price);fd.append('location',loc);fd.append('description',desc);
+    fd.append('imageUrl',img);
+    const r=await fetch('/api/bikes/add',{method:'POST',body:fd});
+    const d=await r.json();
+    if(d.status==='success'){
+      showAlert('Bike added successfully!',true);
+      ['mBrand','mModel','mType','mPrice','mLoc','mImg','mDesc'].forEach(id=>document.getElementById(id).value='');
+      await fetchBikes();
+      loadManage();
+    }else showAlert(d.message,false);
+  }catch(e){showAlert('Error adding bike.',false);}
+}
+
+async function deleteBike(id){
+  if(!confirm('Delete this bike?'))return;
+  try{
+    var fd=new FormData();fd.append('bikeId',id);
+    const r=await fetch('/api/bikes/delete',{method:'POST',body:fd});
+    const d=await r.json();
+    if(d.status==='success'){
+      showAlert('Bike deleted.',true);
+      await fetchBikes();
+      loadManage();
+    }else showAlert(d.message,false);
+  }catch(e){showAlert('Error deleting bike.',false);}
+}
+
+async function loadManage(){
+  var el=document.getElementById('manageList');
+  if(!bikes.length){el.innerHTML='<div class="empty">No bikes in fleet.</div>';return;}
+  el.innerHTML='<h3 style="font-size:15px;font-weight:700;margin-bottom:12px">Current Fleet</h3>'+
+    bikes.map(b=>{
+      var isProtected=PROTECTED.includes(b.id);
+      var deleteBtn=isProtected
+        ?'<span style="font-size:12px;color:var(--muted);font-style:italic">Original fleet</span>'
+        :`<button class="btn-d" onclick="deleteBike('${b.id}')">Delete</button>`;
+      var editBtn = `<button class="btn-y" style="padding: 7px 14px; font-size: 13px; margin-right: 8px;" onclick="openEditModal('${b.id}')">Edit</button>`;
+      return `<div class="ml-row">
+        <div>
+          <div class="ml-name">${b.brand} ${b.model}</div>
+          <div class="ml-meta">${b.type} · ${b.location} · LKR ${b.hourlyRate}/day · ${b.available?'Available':'Booked'}</div>
+        </div>
+        <div style="display: flex; align-items: center;">
+          ${editBtn}
+          ${deleteBtn}
+        </div>
+      </div>`;
+    }).join('');
+}
+
+// EDIT BIKE MODAL LOGIC
+var editModal = document.getElementById('editModal');
+function openEditModal(id) {
+  var b = bikes.find(x => x.id === id);
+  if (!b) return;
+  document.getElementById('editBikeId').value = b.id;
+  document.getElementById('editBrand').value = b.brand;
+  document.getElementById('editModel').value = b.model;
+  document.getElementById('editType').value = b.type;
+  document.getElementById('editPrice').value = b.hourlyRate;
+  document.getElementById('editLoc').value = b.location;
+  document.getElementById('editImg').value = b.imageUrl;
+  document.getElementById('editDesc').value = b.description;
+  editModal.classList.add('active');
+}
+function closeEditModal() { editModal.classList.remove('active'); }
+
+async function saveBikeUpdate() {
+  var bikeId = document.getElementById('editBikeId').value;
+  var brand = document.getElementById('editBrand').value.trim();
+  var model = document.getElementById('editModel').value.trim();
+  var type = document.getElementById('editType').value.trim();
+  var price = document.getElementById('editPrice').value.trim();
+  var loc = document.getElementById('editLoc').value.trim();
+  var img = document.getElementById('editImg').value.trim();
+  var desc = document.getElementById('editDesc').value.trim();
+  
+  if(!brand||!model||!type||!price||!loc||!desc||!img){showAlert('Please fill in all fields.',false);return;}
+  
+  try {
+    var fd = new FormData();
+    fd.append('bikeId', bikeId);
+    fd.append('brand', brand);
+    fd.append('model', model);
+    fd.append('type', type);
+    fd.append('hourlyRate', price);
+    fd.append('location', loc);
+    fd.append('imageUrl', img);
+    fd.append('description', desc);
+    
+    const r = await fetch('/api/bikes/update', {method: 'POST', body: fd});
+    const d = await r.json();
+    
+    if(d.status === 'success') {
+      showAlert('Bike updated successfully!', true);
+      closeEditModal();
+      await fetchBikes();
+      loadManage();
+    } else {
+      showAlert(d.message, false);
+    }
+  } catch(e) {
+    showAlert('Error updating bike.', false);
+  }
+}
+
+// MODAL
+var modal=document.getElementById('rentModal');
+var sDate=document.getElementById('sDate');
+var eDate=document.getElementById('eDate');
+
+function openModal(id,name,rate){
+  document.getElementById('mId').value=id;
+  document.getElementById('mName').textContent=name;
+  document.getElementById('mRate').value=rate;
+  sDate.value='';eDate.value='';calcCost();
+  modal.classList.add('active');
+}
+function closeModal(){modal.classList.remove('active');}
+modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+sDate.addEventListener('change',calcCost);
+eDate.addEventListener('change',calcCost);
+
+function calcCost(){
+  var s=new Date(sDate.value),e=new Date(eDate.value);
+  var rate=parseFloat(document.getElementById('mRate').value);
+  if(sDate.value&&eDate.value&&s<=e){
+    var days=Math.ceil(Math.abs(e-s)/86400000)+1;
+    document.getElementById('cDays').textContent=days;
+    document.getElementById('cTotal').textContent=(days*rate).toFixed(2);
+  }else{document.getElementById('cDays').textContent='0';document.getElementById('cTotal').textContent='0.00';}
+}
+
+async function confirmRent(){
+  var bikeId=document.getElementById('mId').value;
+  var startDate=sDate.value,endDate=eDate.value;
+  var cost=document.getElementById('cTotal').textContent;
+  var bikeName=document.getElementById('mName').textContent;
+  if(!startDate||!endDate){alert('Select both dates.');return;}
+  if(new Date(startDate)>new Date(endDate)){alert('End date must be after start date.');return;}
+  // Redirect to payment page — booking is confirmed after payment
+  var params=new URLSearchParams({bikeId,bikeName,startDate,endDate,cost});
+  window.location.href='/payment?'+params.toString();
+}
+
+async function returnBike(bikeId){
+  if(!confirm('Return this bike?'))return;
+  try{
+    var fd=new FormData();fd.append('bikeId',bikeId);
+    const r=await fetch('/api/return',{method:'POST',body:fd});
+    const d=await r.json();
+    if(d.status==='success'){alert('Bike returned!');fetchBikes();}
+    else alert('Error: '+d.message);
+  }catch(e){alert('An error occurred.');}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+A001,Himanshu,h@sliit.lk,admin123,Admin
+C001,SampleUser,user@email.com,user123,Customer

@@ -1,0 +1,434 @@
+/* ═══════════════════════════════════════════
+   RideLK Landing Page Styles
+   ═══════════════════════════════════════════ */
+
+/* Reset */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1a2238 48%, #FFD600 48%);
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Typography ── */
+h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    font-size: 0.85rem;
+    color: #FFD500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+p {
+    font-size: 1.1rem;
+    color: #a0a5b1;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    max-width: 500px;
+}
+
+/* ── Navbar ── */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 5%;
+    background-color: #0f172a;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-box {
+    background-color: #FFD500;
+    color: #000;
+    font-weight: bold;
+    padding: 0.5rem 0.8rem;
+    border-radius: 4px;
+    font-size: 1.2rem;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.brand-subtitle {
+    font-size: 0.75rem;
+    color: #a0a5b1;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #FFD500;
+}
+
+/* ── Hero ── */
+.hero {
+    display: flex;
+    flex: 1;
+    padding: 3rem 5%;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    right: -10%;
+    top: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255,213,0,0.15) 0%, rgba(255,213,0,0) 70%);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.hero-content {
+    flex: 1;
+    z-index: 1;
+    max-width: 550px;
+}
+
+.hero-image {
+    flex: 1;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* ── Floating animation ── */
+.float-img {
+    max-width: 80%;
+    height: auto;
+    animation: floatBike 4s ease-in-out infinite;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.25));
+}
+
+@keyframes floatBike {
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-18px); }
+    100% { transform: translateY(0px); }
+}
+
+/* ── Booking Card ── */
+.booking-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    padding: 2.5rem;
+    color: #ffffff;
+    max-width: 500px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+    margin-top: 2rem;
+}
+
+.form-group { margin-bottom: 1.2rem; }
+
+.form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.07);
+    color: #ffffff;
+}
+
+.form-control option { color: #1a2238; background: #fff; }
+
+.form-control:focus { border-color: #FFD500; }
+
+.form-row { display: flex; gap: 1rem; }
+
+.form-row .form-group { flex: 1; }
+
+.btn-primary {
+    width: 100%;
+    padding: 1rem;
+    background-color: #FFD500;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.15s;
+    margin-top: 0.5rem;
+}
+
+.btn-primary:hover { background-color: #e6c000; transform: translateY(-1px); }
+
+.estimated-fare {
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-top: 1.5rem;
+    display: none;
+    color: #fff;
+}
+
+.estimated-fare.active { display: flex; }
+
+.estimated-fare span  { font-size: 0.9rem; }
+.estimated-fare strong { color: #FFD500; font-size: 1.2rem; }
+
+/* ═══ FLEET SECTION ═══ */
+.fleet-section {
+    background: #111827;
+    padding: 5rem 0 4rem;
+}
+
+.fleet-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 5%;
+}
+
+.section-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #FFD500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0.6rem;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.8rem;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.section-sub {
+    color: #6b7b9a;
+    max-width: 500px;
+    font-size: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.fleet-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+.fleet-skeleton {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    height: 220px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50%       { opacity: 0.8; }
+}
+
+.fleet-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.fleet-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.fleet-card--unavailable { opacity: 0.6; }
+
+.fleet-card-badge {
+    background: rgba(255,213,0,0.15);
+    color: #FFD500;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0.4rem 1rem;
+    align-self: flex-start;
+    margin: 1rem 1rem 0;
+    border-radius: 20px;
+}
+
+.fleet-card-body { padding: 1rem 1.2rem; flex: 1; }
+
+.fleet-card-brand { font-size: 0.8rem; color: #6b7b9a; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+.fleet-card-model { font-size: 1.2rem; font-weight: 700; color: #fff; margin: 0.2rem 0 0.5rem; }
+
+.fleet-card-loc { font-size: 0.82rem; color: #8a94a6; margin-bottom: 0.5rem; }
+
+.fleet-card-desc { font-size: 0.82rem; color: #6b7b9a; line-height: 1.5; max-width: 100%; margin-bottom: 0; }
+
+.fleet-card-footer {
+    padding: 1rem 1.2rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* status only — price hidden */
+}
+
+.fleet-price { display: none; } /* Price hidden on landing page */
+
+.fleet-status { font-size: 0.75rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.status-av { background: rgba(22,163,74,0.15); color: #4ade80; }
+.status-bk { background: rgba(239,68,68,0.15); color: #f87171; }
+
+/* ═══ REVIEWS SECTION ═══ */
+.reviews-section {
+    background: #ffffff;
+    padding: 5rem 0 4rem;
+    overflow: hidden;
+}
+
+.reviews-section .section-label { color: #1a2238; }
+
+.reviews-section .section-title { color: #1a2238; }
+
+.reviews-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 5%;
+    margin-bottom: 2.5rem;
+}
+
+.reviews-marquee-wrap {
+    overflow: hidden;
+    width: 100%;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+}
+
+.reviews-track {
+    display: flex;
+    gap: 1.5rem;
+    width: max-content;
+    animation: scrollLeft 35s linear infinite;
+}
+
+.reviews-track:hover { animation-play-state: paused; }
+
+@keyframes scrollLeft {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.review-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    min-width: 300px;
+    max-width: 320px;
+    flex-shrink: 0;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.review-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(0,0,0,0.08); }
+
+.review-stars { color: #FFD500; font-size: 1rem; margin-bottom: 0.7rem; letter-spacing: 2px; }
+
+.review-text { font-size: 0.9rem; color: #475569; line-height: 1.6; margin-bottom: 1rem; font-style: italic; max-width: 100%; }
+
+.review-meta { display: flex; flex-direction: column; gap: 2px; }
+.review-meta strong { font-size: 0.85rem; color: #1a2238; }
+.review-meta span   { font-size: 0.75rem; color: #94a3b8; }
+
+.review-card-ph { color: #94a3b8; padding: 2rem 5%; font-size: 0.9rem; }
+
+/* ═══ FOOTER ═══ */
+.landing-footer {
+    background: #0f172a;
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding: 1.5rem 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #6b7b9a;
+}
+
+/* ── Responsive ── */
+@media (max-width: 992px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem 5%;
+    }
+
+    .hero-content p { margin: 0 auto 2rem; }
+
+    .booking-card { margin: 2rem auto; }
+
+    .hero-image { margin-top: 3rem; }
+
+    h1 { font-size: 2.4rem; }
+
+    .section-title { font-size: 1.5rem; }
+}

@@ -1,0 +1,10 @@
+Namalbaby,namalbaby123@gmail.com,Namalbaby
+Kasun Perera,kasun@gmail.com,kasun123
+Sanduni Silva,sanduni@gmail.com,sanduni456
+Pasan Jayakody,pasan@gmail.com,pasan789
+John Doe,john@gmail.com,john123
+Jane Smith,jane@gmail.com,jane456
+Robert Brown,robert@gmail.com,robert789
+Emily Davis,emily@gmail.com,emily123
+Michael Wilson,michael@gmail.com,michael456
+Sarah Miller,sarah@gmail.com,sarah789

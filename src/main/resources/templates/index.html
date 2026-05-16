@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RideLK | Sri Lanka Vehicle Booking</title>
+    <meta name="description" content="Compare vehicles, estimate your fare and place a booking through a cleaner, faster RideLK experience.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/landing.css}" href="../static/css/landing.css">
+</head>
+
+<body>
+
+    
+    <nav class="navbar">
+        <a href="/" class="nav-brand" style="text-decoration: none; color: inherit;">
+            <div class="logo-box">RL</div>
+            <div class="brand-text">
+                <span class="brand-title">RideLK</span>
+                <span class="brand-subtitle">Sri Lanka vehicle booking</span>
+            </div>
+        </a>
+        <div class="nav-links">
+            <a th:href="@{/bikes?tab=fleet}">Fleet</a>
+            <a th:href="@{/bikes?tab=bookings}">My Bookings</a>
+            <a th:href="@{/bikes?tab=manage}">Manage Bikes</a>
+            <a th:href="@{/bikes?tab=reviews}">Reviews</a>
+
+            <a th:if="${session.userEmail == null}" th:href="@{/login}"
+                style="color: #FFD500; font-weight: 600;">Login</a>
+            <a th:if="${session.userEmail != null}" th:href="@{/logout}"
+                style="color: #FFD500; font-weight: 600;">Logout</a>
+        </div>
+    </nav>
+
+    
+    <main class="hero">
+
+        
+        <div class="hero-content">
+            <h2>Sri Lanka Vehicle Booking</h2>
+            <h1>Reliable rides for every trip.</h1>
+            <p>Compare vehicles, estimate your fare and place a booking through a cleaner, faster RideLK experience.</p>
+
+            
+            <div class="booking-card">
+                <form id="fareForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="startDate">Start Date</label>
+                            <input type="date" id="startDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDate">End Date</label>
+                            <input type="date" id="endDate" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bikeBrand">Brand</label>
+                            <select id="bikeBrand" class="form-control" onchange="updateModels()" required>
+                                <option value="">Select Brand</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="bikeModel">Model</label>
+                            <select id="bikeModel" class="form-control" required>
+                                <option value="">Select Model</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-primary" onclick="calculateFare()">Calculate fare</button>
+
+                    <div class="estimated-fare" id="fareResult" style="flex-direction: column; gap: 1rem; align-items: stretch;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>Estimated fare</span>
+                            <strong id="fareAmount">LKR 0</strong>
+                        </div>
+                        <button type="button" class="btn-primary" style="margin-top: 0;" onclick="proceedToPayment()">Continue to Payment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        
+        <div class="hero-image">
+            <img class="float-img"
+                 th:src="@{/images/motorcycle_dog_illustration.png}"
+                 src="../static/images/motorcycle_dog_illustration.png"
+                 alt="Motorcycle with dog Illustration">
+        </div>
+
+    </main>
+
+    
+    <section class="fleet-section">
+        <div class="fleet-inner">
+            <div class="section-label">Our Fleet</div>
+            <h2 class="section-title">Popular bikes available now</h2>
+            <p class="section-sub">Choose from our curated selection of bikes and scooters across Sri Lanka.</p>
+            <div class="fleet-grid" id="fleetGrid">
+                
+                <div class="fleet-skeleton"></div>
+                <div class="fleet-skeleton"></div>
+                <div class="fleet-skeleton"></div>
+            </div>
+        </div>
+    </section>
+
+    
+    <section class="reviews-section">
+        <div class="reviews-inner">
+            <div class="section-label">What Riders Say</div>
+            <h2 class="section-title">Real reviews from real riders</h2>
+        </div>
+        <div class="reviews-marquee-wrap">
+            <div class="reviews-track" id="reviewsTrack">
+                
+                <div class="review-card-ph">Loading reviews...</div>
+            </div>
+        </div>
+    </section>
+
+    
+    <footer class="landing-footer">
+        <span class="logo-box" style="font-size:.9rem; padding:.3rem .6rem;">RL</span>
+        <span>&nbsp;RideLK © 2026 · Sri Lanka Vehicle Booking</span>
+    </footer>
+
+    <script>
+        let availableBikes = [];
+
+        // ── Load bikes ──
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/bikes');
+                availableBikes = await res.json();
+                populateBrands();
+                renderFleet(availableBikes);
+            } catch (e) {
+                console.error('Error fetching bikes:', e);
+            }
+            loadReviews();
+        });
+
+        // ── Brand / Model selects ──
+        function populateBrands() {
+            const brandSelect = document.getElementById('bikeBrand');
+            const uniqueBrands = [...new Set(availableBikes.map(b => b.brand))];
+            uniqueBrands.forEach(brand => {
+                const opt = document.createElement('option');
+                opt.value = brand; opt.textContent = brand;
+                brandSelect.appendChild(opt);
+            });
+        }
+
+        function updateModels() {
+            const selectedBrand = document.getElementById('bikeBrand').value;
+            const modelSelect = document.getElementById('bikeModel');
+            modelSelect.innerHTML = '<option value="">Select Model</option>';
+            availableBikes.filter(b => b.brand === selectedBrand).forEach(bike => {
+                const opt = document.createElement('option');
+                opt.value = bike.id; opt.textContent = bike.model;
+                modelSelect.appendChild(opt);
+            });
+        }
+
+        // ── Fare calculator ──
+        function calculateFare() {
+            const startDateStr = document.getElementById('startDate').value;
+            const endDateStr   = document.getElementById('endDate').value;
+            const selectedId   = document.getElementById('bikeModel').value;
+            const fareResult   = document.getElementById('fareResult');
+            const fareAmount   = document.getElementById('fareAmount');
+
+            if (!startDateStr || !endDateStr) { alert('Please select both dates.'); return; }
+            if (!selectedId)                  { alert('Please select a Brand and Model.'); return; }
+
+            const startDate = new Date(startDateStr);
+            const endDate   = new Date(endDateStr);
+            if (startDate > endDate) { alert('End Date must be after Start Date.'); return; }
+
+            const selectedBike = availableBikes.find(b => b.id === selectedId);
+            const dailyRate    = selectedBike ? selectedBike.hourlyRate : 0;
+            const diffDays     = Math.ceil(Math.abs(endDate - startDate) / 86400000) + 1;
+            const totalFare    = diffDays * dailyRate;
+
+            window.currentBooking = {
+                bikeId:    selectedBike.id,
+                bikeName:  `${selectedBike.brand} ${selectedBike.model}`,
+                startDate: startDateStr,
+                endDate:   endDateStr,
+                cost:      totalFare
+            };
+
+            fareAmount.innerText = `LKR ${totalFare.toLocaleString()}`;
+            fareResult.classList.add('active');
+        }
+
+        async function proceedToPayment() {
+            try {
+                const res  = await fetch('/api/session');
+                const data = await res.json();
+                if (!data.loggedIn) {
+                    alert('Please login first to continue with the booking.');
+                    window.location.href = '/login';
+                    return;
+                }
+                if (window.currentBooking) {
+                    window.location.href = '/payment?' + new URLSearchParams(window.currentBooking).toString();
+                }
+            } catch (e) {
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        // ── Fleet grid ──
+        function renderFleet(bikes) {
+            const grid = document.getElementById('fleetGrid');
+            if (!bikes.length) { grid.innerHTML = '<p style="color:#a0a5b1">No bikes found.</p>'; return; }
+            grid.innerHTML = bikes.map(b => `
+                <div class="fleet-card ${b.available ? '' : 'fleet-card--unavailable'}">
+                    <div style="height: 180px; overflow: hidden; background: #f1f5f9; display: flex; align-items: center; justify-content: center;">
+                        <img src="${b.imageUrl}" alt="${b.brand} ${b.model}" style="width: 100%; height: 100%; object-fit: contain; transition: transform 0.5s ease;">
+                    </div>
+                    <div class="fleet-card-badge">${b.type}</div>
+                    <div class="fleet-card-body">
+                        <div class="fleet-card-brand">${b.brand}</div>
+                        <div class="fleet-card-model">${b.model}</div>
+                        <div class="fleet-card-loc">📍 ${b.location}</div>
+                        <div class="fleet-card-desc">${b.description}</div>
+                    </div>
+                    <div class="fleet-card-footer">
+                        <span class="fleet-price">LKR ${b.hourlyRate.toLocaleString()}<small>/day</small></span>
+                        <span class="fleet-status ${b.available ? 'status-av' : 'status-bk'}">${b.available ? 'Available' : 'Booked'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ── Reviews marquee ──
+        async function loadReviews() {
+            const track = document.getElementById('reviewsTrack');
+            try {
+                const res     = await fetch('/api/reviews');
+                const reviews = await res.json();
+                if (!reviews.length) {
+                    track.innerHTML = '<div class="review-card-ph">No reviews yet. Be the first to ride!</div>';
+                    return;
+                }
+                // Duplicate for seamless loop
+                const cards = [...reviews, ...reviews].map(r => `
+                    <div class="review-card">
+                        <div class="review-stars">${'★'.repeat(Math.min(5, r.rating || 5))}${'☆'.repeat(5 - Math.min(5, r.rating || 5))}</div>
+                        <p class="review-text">"${r.comment || r.message || 'Great experience!'}"</p>
+                        <div class="review-meta">
+                            <strong>${r.userName || r.userEmail || 'Rider'}</strong>
+                            <span>${r.bikeId || ''}</span>
+                        </div>
+                    </div>
+                `).join('');
+                track.innerHTML = cards;
+            } catch (e) {
+                track.innerHTML = '<div class="review-card-ph">Could not load reviews.</div>';
+            }
+        }
+    </script>
+</body>
+
+</html>
