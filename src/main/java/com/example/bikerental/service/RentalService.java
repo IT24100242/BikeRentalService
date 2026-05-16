@@ -9,26 +9,25 @@ import java.util.List;
 
 @Service
 public class RentalService {
+
+    // this file is used to store rental details.
     private static final String FILE_PATH = "rentals.txt";
 
+    // constructor--->this runs when the application starts.
     public RentalService() {
-        createFileIfNotExists();
-    }
-
-    private void createFileIfNotExists() {
+        File file = new File(FILE_PATH);
         try {
-            File file = new File(FILE_PATH);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
+            if (!file.exists()) file.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    //create operation-->this saves a new rental to the text file.
+
     public synchronized void createRental(Rental rental) {
-        createFileIfNotExists();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
+            // save full rental details as one line.
             writer.write(rental.toFileString());
             writer.newLine();
         } catch (IOException e) {
@@ -36,12 +35,13 @@ public class RentalService {
         }
     }
 
+    // this method also saves a rental.
     public synchronized void addRental(Rental rental) {
         createRental(rental);
     }
 
+    // this reads all rental details from the file.
     public synchronized List<Rental> getAllRentals() {
-        createFileIfNotExists();
         List<Rental> rentals = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
@@ -51,7 +51,7 @@ public class RentalService {
                     Rental rental = Rental.fromFileString(line);
                     if (rental != null) rentals.add(rental);
                 } catch (Exception ignored) {
-                    // Skip invalid lines safely.
+                    // Skip malformed lines safely
                 }
             }
         } catch (IOException e) {
@@ -60,18 +60,19 @@ public class RentalService {
         return rentals;
     }
 
+    //read {filter}ope: Returns rentals belonging to a specific user.
     public synchronized List<Rental> getRentalsByUserEmail(String userEmail) {
-        List<Rental> userRentals = new ArrayList<>();
-        for (Rental rental : getAllRentals()) {
-            if (rental.getUserEmail() != null && rental.getUserEmail().equalsIgnoreCase(userEmail)) {
-                userRentals.add(rental);
+        List<Rental> result = new ArrayList<>();
+        for (Rental r : getAllRentals()) {
+            if (r.getUserEmail() != null && r.getUserEmail().equalsIgnoreCase(userEmail)) {
+                result.add(r);
             }
         }
-        return userRentals;
+        return result;
     }
 
+//create rentalID
     public synchronized String generateRentalId() {
-        int next = getAllRentals().size() + 1;
-        return String.format("R%03d", next);
+        return String.format("R%03d", getAllRentals().size() + 1);
     }
 }
