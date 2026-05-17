@@ -6,6 +6,7 @@ public class Admin {
     private String name;
     private String email;
     private String password;
+    private String role;
     
 
     public Admin() {
@@ -13,11 +14,15 @@ public class Admin {
     
 
     public Admin(String adminId, String name, String email, String password) {
+        this(adminId, name, email, password, "System Admin");
+    }
+
+    public Admin(String adminId, String name, String email, String password, String role) {
         this.adminId = adminId;
         this.name = name;
         this.email = email;
         this.password = password;
-
+        this.role = role;
     }
 
     public String getAdminId() {
@@ -50,5 +55,13 @@ public class Admin {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
