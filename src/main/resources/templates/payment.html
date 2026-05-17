@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment — RideLK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#1a2238;--yellow:#FFD600;--yh:#e6c200;--white:#fff;--bg:#f5f6fa;--text:#1a2238;--muted:#8a94a6;--border:#e8ecf1;--green:#16a34a}
+    body{font-family:'Inter',sans-serif;min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
+
+    .pay-wrapper{display:flex;gap:24px;width:100%;max-width:820px;align-items:flex-start}
+
+    /* Summary card */
+    .summary-card{background:var(--navy);border-radius:20px;padding:32px;width:280px;flex-shrink:0;color:#fff;position:relative;overflow:hidden}
+    .s-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--yellow);text-transform:uppercase;margin-bottom:6px}
+    .s-bike{font-size:20px;font-weight:800;margin-bottom:20px;line-height:1.2}
+    .s-row{display:flex;justify-content:space-between;font-size:13px;color:#8a9ab8;margin-bottom:10px}
+    .s-row span:last-child{color:#fff;font-weight:600}
+    .s-divider{border:none;border-top:1px solid rgba(255,255,255,.1);margin:16px 0}
+    .s-total{display:flex;justify-content:space-between;font-size:16px;font-weight:800;position:relative;z-index:1}
+    .s-total span:last-child{color:#ffffff}
+
+    /* Payment form card */
+    .form-card{flex:1;background:var(--white);border-radius:20px;padding:36px;box-shadow:0 8px 32px rgba(26,34,56,.08);border:1px solid var(--border)}
+    .fc-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--yellow);text-transform:uppercase;margin-bottom:8px}
+    .fc-title{font-size:24px;font-weight:800;color:var(--text);margin-bottom:24px}
+
+    /* Method toggle */
+    .method-toggle{display:flex;gap:10px;margin-bottom:24px}
+    .method-btn{flex:1;padding:12px;border:2px solid var(--border);border-radius:12px;background:transparent;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .method-btn:hover{border-color:var(--navy);color:var(--navy)}
+    .method-btn.selected{border-color:var(--yellow);background:#fffde7;color:var(--navy)}
+
+    .fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+    .fg label{font-size:13px;font-weight:600;color:var(--text)}
+    .fg input{padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);transition:.2s}
+    .fg input:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(26,34,56,.07)}
+    .fg input::placeholder{color:#c0c7d4}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+    .card-fields{transition:.3s}
+
+    .cash-note{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 16px;font-size:13.5px;color:var(--green);display:none;margin-bottom:14px}
+    .cash-note.show{display:block}
+
+    .btn-pay{width:100%;padding:14px;background:var(--yellow);color:var(--navy);border:none;border-radius:12px;font-family:'Inter',sans-serif;font-size:16px;font-weight:800;cursor:pointer;transition:.2s;margin-top:6px}
+    .btn-pay:hover{background:var(--yh);transform:translateY(-1px)}
+    .btn-pay:active{transform:translateY(0)}
+
+    .back-link{display:block;text-align:center;margin-top:16px;font-size:13px;color:var(--muted);text-decoration:none}
+    .back-link:hover{color:var(--navy)}
+
+    /* Simulated card face */
+    .card-preview{background:linear-gradient(135deg,#1a2238 60%,#2a3a5e);border-radius:14px;padding:20px 22px;margin-bottom:20px;color:#fff;position:relative;overflow:hidden}
+    .card-preview::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(255,214,0,.1);border-radius:50%}
+    .cp-chip{width:32px;height:24px;background:var(--yellow);border-radius:4px;margin-bottom:16px}
+    .cp-num{font-size:17px;font-weight:600;letter-spacing:3px;margin-bottom:14px;font-family:monospace}
+    .cp-row{display:flex;justify-content:space-between;font-size:11px;color:#8a9ab8}
+    .cp-row span:last-child{font-size:13px;font-weight:600;color:#fff}
+  </style>
+</head>
+<body>
+
+<div class="pay-wrapper">
+
+  
+  <div class="summary-card">
+    <div class="s-label">Booking Summary</div>
+    <div class="s-bike" th:text="${bikeName}">Bike Name</div>
+
+    <div class="s-row"><span>Start Date</span><span th:text="${startDate}">—</span></div>
+    <div class="s-row"><span>End Date</span>  <span th:text="${endDate}">—</span></div>
+
+    <hr class="s-divider">
+
+    <div class="s-total">
+      <span>Total</span>
+      <span>LKR <span th:text="${cost}">0</span></span>
+    </div>
+  </div>
+
+  
+  <div class="form-card">
+    <div class="fc-label">Secure Checkout</div>
+    <h1 class="fc-title">Complete Payment</h1>
+
+    
+    <div class="card-preview" id="cardPreview">
+      <div class="cp-chip"></div>
+      <div class="cp-num" id="previewNum">•••• •••• •••• ••••</div>
+      <div class="cp-row">
+        <div><div style="font-size:10px;color:#8a9ab8;margin-bottom:2px">CARD HOLDER</div><span id="previewName">YOUR NAME</span></div>
+        <div><div style="font-size:10px;color:#8a9ab8;margin-bottom:2px">EXPIRES</div><span id="previewExp">MM/YY</span></div>
+      </div>
+    </div>
+
+    
+    <div class="method-toggle">
+      <button type="button" class="method-btn selected" id="btn-card" onclick="selectMethod('card')">💳 Card</button>
+      <button type="button" class="method-btn"          id="btn-cash" onclick="selectMethod('cash')">💵 Cash on Pickup</button>
+    </div>
+
+    <form action="/pay" method="POST" onsubmit="return validateForm()">
+      <input type="hidden" name="bikeId"    th:value="${bikeId}">
+      <input type="hidden" name="startDate" th:value="${startDate}">
+      <input type="hidden" name="endDate"   th:value="${endDate}">
+      <input type="hidden" name="cost"      th:value="${cost}">
+      <input type="hidden" name="method"    id="methodInput" value="CARD">
+
+      
+      <div class="card-fields" id="cardFields">
+        <div class="fg">
+          <label>Cardholder Name</label>
+          <input type="text" id="cardName" placeholder="John Silva" oninput="previewName(this.value)">
+        </div>
+        <div class="fg">
+          <label>Card Number</label>
+          <input type="text" id="cardNum" maxlength="19" placeholder="1234 5678 9012 3456"
+                 oninput="formatCardNum(this);previewNum(this.value)">
+        </div>
+        <div class="row2">
+          <div class="fg">
+            <label>Expiry Date</label>
+            <input type="text" id="expiry" maxlength="5" placeholder="MM/YY"
+                   oninput="formatExpiry(this);previewExp(this.value)">
+          </div>
+          <div class="fg">
+            <label>CVV</label>
+            <input type="text" id="cvv" maxlength="3" placeholder="•••">
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="cash-note" id="cashNote">
+        ✓ Pay with cash when you pick up the bike. Your booking will be confirmed immediately.
+      </div>
+
+      <button type="submit" class="btn-pay" id="payBtn">
+        Pay LKR <span th:text="${cost}">0</span>
+      </button>
+    </form>
+
+    <a href="/bikes" class="back-link">← Back to fleet</a>
+  </div>
+
+</div>
+
+<script>
+  function selectMethod(m) {
+    document.getElementById('methodInput').value = m.toUpperCase();
+    document.getElementById('btn-card').classList.toggle('selected', m === 'card');
+    document.getElementById('btn-cash').classList.toggle('selected', m === 'cash');
+    document.getElementById('cardFields').style.display  = m === 'card' ? 'block' : 'none';
+    document.getElementById('cardPreview').style.display = m === 'card' ? 'block' : 'none';
+    document.getElementById('cashNote').classList.toggle('show', m === 'cash');
+  }
+
+  function formatCardNum(el) {
+    var v = el.value.replace(/\D/g,'').substring(0,16);
+    el.value = v.replace(/(.{4})/g,'$1 ').trim();
+  }
+
+  function formatExpiry(el) {
+    var v = el.value.replace(/\D/g,'');
+    if (v.length >= 2) v = v.substring(0,2) + '/' + v.substring(2,4);
+    el.value = v;
+  }
+
+  function previewNum(v)  { document.getElementById('previewNum').textContent  = v || '•••• •••• •••• ••••'; }
+  function previewName(v) { document.getElementById('previewName').textContent = v.toUpperCase() || 'YOUR NAME'; }
+  function previewExp(v)  { document.getElementById('previewExp').textContent  = v || 'MM/YY'; }
+
+  function validateForm() {
+    var method = document.getElementById('methodInput').value;
+    if (method === 'CARD') {
+      var num  = document.getElementById('cardNum').value.replace(/\s/g,'');
+      var exp  = document.getElementById('expiry').value;
+      var cvv  = document.getElementById('cvv').value;
+      var name = document.getElementById('cardName').value.trim();
+      if (!name || num.length < 16 || exp.length < 5 || cvv.length < 3) {
+        alert('Please fill in all card details.');
+        return false;
+      }
+    }
+    return true;
+  }
+</script>
+</body>
+</html>
