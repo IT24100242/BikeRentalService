@@ -1,0 +1,4 @@
+PAY-2ea1a,R-3613b,21000.0,CARD,Completed
+PAY-eec2f,R-12aa5,14000.0,CARD,Completed
+PAY-e1817,R-777a6,8000.0,CASH,Completed
+PAY-bba8a,R-fe19b,15000.0,CASH,Completed
