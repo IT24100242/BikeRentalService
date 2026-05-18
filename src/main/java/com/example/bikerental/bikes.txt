@@ -1,6 +1,0 @@
-BK-101,Yamaha,MT-15,7000.0,true,Sport,Colombo,A stylish sport bike with strong performance,/images/mt15.webp
-BK-102,Honda,Dio,2500.0,true,Scooter,Kandy,Easy and comfortable scooter for city rides and daily travel.,/images/Honda-Dio-Black.png
-BK-103,Bajaj,Pulsar,4000.0,true,Street,Galle,Reliable bike for daily and long rides with balanced comfort.,/images/bajajpulsar.webp
-BK-104,Suzuki,Gixxer,6500.0,true,Sport,Colombo,Modern sporty bike with good control and road presence.,/images/GSX150RF-8GRAY.png
-BK-105,TVS,Ntorq,3000.0,true,Scooter,Negombo,Premium scooter with comfort,/images/ntorq.png
-BK-106,Honda,CB150R,7500.0,false,Sport,Colombo,A premium naked sport bike with advanced features and smooth handling.,/images/HONDA_CB_150_R.png

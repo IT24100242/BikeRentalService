@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Local text databases and data files
+*.txt
+src/main/java/com/example/bikerental/*.txt
+
