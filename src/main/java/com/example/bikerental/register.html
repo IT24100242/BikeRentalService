@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account — RideLK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:        #1a2238;
+      --yellow:      #FFD600;
+      --yellow-hover:#e6c200;
+      --white:       #ffffff;
+      --text-dark:   #1a2238;
+      --text-muted:  #8a94a6;
+      --border:      #e2e8f0;
+      --error-bg:    #fef2f2;
+      --error-text:  #dc2626;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--navy) 58%, var(--yellow) 58%);
+      padding: 24px;
+    }
+
+    /* ── Unified card ── */
+    .register-card {
+      display: flex;
+      width: 860px;
+      max-width: 100%;
+      min-height: 520px;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow:
+        0 40px 80px rgba(0,0,0,0.45),
+        0 0 0 1px rgba(255,255,255,0.04);
+      animation: popIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+      position: relative;
+    }
+
+    @keyframes popIn {
+      from { transform: translateY(20px) scale(0.98); opacity: 0; }
+      to   { transform: translateY(0)    scale(1);    opacity: 1; }
+    }
+
+    /* ── LEFT: dark brand panel ── */
+    .panel-left {
+      flex: 1;
+      background: var(--navy);
+      padding: 44px 40px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      width: 40px;
+      height: 40px;
+      background: var(--yellow);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--navy);
+      flex-shrink: 0;
+    }
+
+    .brand-text { display: flex; flex-direction: column; }
+    .brand-name { font-size: 16px; font-weight: 700; color: var(--white); line-height: 1.1; }
+    .brand-sub  { font-size: 11px; color: #6b7b9a; }
+
+    .welcome-block {
+      margin-top: auto;
+      margin-bottom: 36px;
+    }
+
+    .welcome-block h1 {
+      font-size: 38px;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .welcome-block p {
+      font-size: 13.5px;
+      color: #6b7b9a;
+      line-height: 1.6;
+    }
+
+
+
+    /* Deco circles */
+    .deco-circle {
+      position: absolute;
+      bottom: -55px;
+      right: -55px;
+      width: 160px;
+      height: 160px;
+      background: var(--yellow);
+      border-radius: 50%;
+      z-index: 2;
+    }
+
+    .deco-circle-sm {
+      position: absolute;
+      top: -30px;
+      left: -30px;
+      width: 90px;
+      height: 90px;
+      background: rgba(255,214,0,0.06);
+      border-radius: 50%;
+    }
+
+    /* ── RIGHT: white form panel ── */
+    .panel-right {
+      width: 380px;
+      flex-shrink: 0;
+      background: var(--white);
+      padding: 44px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 3;
+    }
+
+    .card-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--yellow);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 24px;
+      line-height: 1.1;
+    }
+
+    .alert-error {
+      padding: 10px 13px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      font-weight: 500;
+      background: var(--error-bg);
+      color: var(--error-text);
+    }
+
+    .form-group { margin-bottom: 14px; }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 11px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--text-dark);
+      background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(26,34,56,0.08);
+    }
+
+    .form-group input::placeholder { color: #c0c7d4; }
+
+    .btn-register {
+      width: 100%;
+      padding: 13px;
+      background: var(--yellow);
+      color: var(--navy);
+      border: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-register:hover  { background: var(--yellow-hover); transform: translateY(-1px); }
+    .btn-register:active { transform: translateY(0); }
+
+    .card-footer { text-align: center; margin-top: 16px; }
+
+    .card-footer a {
+      font-size: 13px;
+      color: var(--yellow);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .card-footer a:hover { color: var(--yellow-hover); text-decoration: underline; }
+  </style>
+</head>
+
+<body>
+
+  <div class="register-card">
+
+    
+    <div class="panel-left">
+      <div class="deco-circle-sm"></div>
+
+      <div class="brand">
+        <div class="brand-badge">RL</div>
+        <div class="brand-text">
+          <span class="brand-name">RideLK</span>
+          <span class="brand-sub">Sri Lankan smart rides</span>
+        </div>
+      </div>
+
+      <div class="welcome-block">
+        <h1>Create your<br>account.</h1>
+        <p>Sri Lanka's premier bike rental service.</p>
+      </div>
+
+      <div class="deco-circle"></div>
+    </div>
+
+    
+    <div class="panel-right">
+      <p class="card-label">New Account</p>
+      <h2 class="card-title">Get started</h2>
+
+      <div th:if="${error}" class="alert-error" th:text="${error}"></div>
+
+      <form action="/register" method="POST">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="John Silva" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="pass">Password</label>
+          <input type="password" id="pass" name="pass" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="btn-register" id="registerBtn">Create Account</button>
+      </form>
+
+      <div class="card-footer">
+        <a href="/login">Already have an account? Sign in</a>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

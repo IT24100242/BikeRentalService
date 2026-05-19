@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Rentals — RideLK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#1a2238;--yellow:#FFD600;--white:#fff;--bg:#f5f6fa;--muted:#8a94a6;--border:#e8ecf1;--green:#16a34a;--green-bg:#f0fdf4;--danger:#ef4444;--danger-bg:#fef2f2;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--navy);min-height:100vh;}
+
+    /* Navbar */
+    .navbar{background:#0f172a;padding:1.2rem 5%;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.3);}
+    .nav-brand{display:flex;align-items:center;gap:.8rem;text-decoration:none;color:#fff;}
+    .logo-box{background:var(--yellow);color:#000;font-weight:800;padding:.4rem .7rem;border-radius:6px;font-size:1rem;}
+    .brand-title{font-size:1rem;font-weight:700;color:#fff;}
+    .nav-links a{color:#cbd5e1;text-decoration:none;font-size:.9rem;margin-left:1.5rem;transition:color .2s;}
+    .nav-links a:hover{color:var(--yellow);}
+
+    /* Page */
+    .page{max-width:1100px;margin:0 auto;padding:2.5rem 5%;}
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;}
+    .page-title{font-size:1.8rem;font-weight:800;}
+
+    /* Stats strip */
+    .stats-strip{display:flex;gap:1rem;margin-bottom:2rem;}
+    .stat-pill{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1rem 1.5rem;flex:1;text-align:center;}
+    .stat-pill .val{font-size:1.8rem;font-weight:800;color:var(--navy);}
+    .stat-pill .lbl{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+
+    /* Table */
+    .table-wrap{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;}
+    table{width:100%;border-collapse:collapse;}
+    thead{background:var(--bg);}
+    th{padding:13px 20px;text-align:left;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);}
+    td{padding:14px 20px;font-size:14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tr:hover td{background:#fafbfc;}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;}
+    .badge-confirmed{background:var(--green-bg);color:var(--green);}
+    .badge-pending{background:#fef9c3;color:#92400e;}
+    .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+    .empty-state h3{font-size:1.2rem;margin-bottom:.5rem;}
+
+    /* New rental form */
+    .form-card{background:#fff;border-radius:14px;border:1px solid var(--border);padding:1.8rem;margin-bottom:2rem;}
+    .form-card h3{font-size:1rem;font-weight:700;margin-bottom:1.2rem;}
+    .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;}
+    .fg{display:flex;flex-direction:column;gap:4px;}
+    .fg label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;}
+    .fg input,.fg select{padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-family:'Inter',sans-serif;font-size:14px;color:var(--navy);}
+    .fg input:focus,.fg select:focus{outline:none;border-color:var(--navy);}
+    .btn-y{background:var(--yellow);color:var(--navy);border:none;padding:11px 28px;border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:.8rem;}
+    .btn-y:hover{background:#e6c200;}
+    .alert{padding:12px 16px;border-radius:10px;font-size:13.5px;font-weight:500;margin-bottom:1.5rem;}
+    .alert-success{background:var(--green-bg);color:var(--green);}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <div class="logo-box">RL</div>
+    <span class="brand-title">RideLK</span>
+  </a>
+  <div class="nav-links">
+    <a th:href="@{/}">Home</a>
+    <a th:href="@{/bikes?tab=fleet}">Fleet</a>
+    <a th:href="@{/rentals}" style="color:#FFD600;font-weight:700;">My Rentals</a>
+    <a th:href="@{/logout}" style="color:#FFD600;font-weight:700;">Logout</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">My Rentals</h1>
+  </div>
+
+  <div class="alert alert-success" th:if="${param.booked}">✓ Rental booked successfully!</div>
+
+  <!-- Stats -->
+  <div class="stats-strip">
+    <div class="stat-pill">
+      <div class="val" th:text="${rentalCount}">0</div>
+      <div class="lbl">Total Bookings</div>
+    </div>
+    <div class="stat-pill">
+      <div class="val">LKR <span th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')}">0</span></div>
+      <div class="lbl">Total Spent</div>
+    </div>
+    <div class="stat-pill">
+      <div class="val" th:text="${today}">—</div>
+      <div class="lbl">Today</div>
+    </div>
+  </div>
+
+  <!-- New Rental Form -->
+  <div class="form-card" th:if="${!admin}">
+    <h3>Book a New Rental</h3>
+    <form action="/rentals" method="POST">
+      <div class="form-grid">
+        <div class="fg"><label>Bike</label><input name="bikeName" required placeholder="e.g. Yamaha MT-15"></div>
+        <div class="fg"><label>Pickup Location</label><input name="pickupLocation" required placeholder="City"></div>
+        <div class="fg"><label>Drop Location</label><input name="dropLocation" required placeholder="City"></div>
+        <div class="fg"><label>Rental Date</label><input type="date" name="rentalDate" required></div>
+        <div class="fg"><label>Days</label><input type="number" name="rentalDays" required min="1" placeholder="3"></div>
+        <div class="fg"><label>Price / Day (LKR)</label><input type="number" name="pricePerDay" required placeholder="7000"></div>
+      </div>
+      <button type="submit" class="btn-y">Confirm Booking</button>
+    </form>
+  </div>
+
+  <!-- Rentals Table -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Rental ID</th>
+          <th>Bike</th>
+          <th>Route</th>
+          <th>Date</th>
+          <th>Days</th>
+          <th>Total</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="r : ${rentals}">
+          <td th:text="${r.rentalId}"></td>
+          <td th:text="${r.bikeName}"></td>
+          <td th:text="${r.pickupLocation + ' → ' + r.dropLocation}"></td>
+          <td th:text="${r.rentalDate}"></td>
+          <td th:text="${r.rentalDays}"></td>
+          <td>LKR <span th:text="${#numbers.formatDecimal(r.totalAmount, 0, 'COMMA', 0, 'POINT')}"></span></td>
+          <td><span class="badge" th:classappend="${r.status == 'Confirmed'} ? 'badge-confirmed' : 'badge-pending'" th:text="${r.status}"></span></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(rentals)}">
+          <td colspan="7">
+            <div class="empty-state">
+              <h3>No rentals yet</h3>
+              <p>Use the form above to book your first ride!</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>
