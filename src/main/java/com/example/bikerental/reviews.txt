@@ -1,0 +1,6 @@
+REV-001,namalbaby123@gmail.com,BK-101,5,Great bike!
+REV-002,kasun@gmail.com,BK-102,4,Good for city.
+REV-003,sanduni@gmail.com,BK-103,5,Very smooth.
+REV-004,pasan@gmail.com,BK-104,4,Loved the power.
+REV-005,john@gmail.com,BK-105,5,Very comfortable.
+REV-006,jane@gmail.com,BK-106,5,Premium feel.
